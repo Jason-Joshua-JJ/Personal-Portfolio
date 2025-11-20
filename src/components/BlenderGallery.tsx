@@ -7,7 +7,10 @@ import watchImage from "@/assets/watch.png";
 import mushroomImage from "@/assets/mushroom.jpg";
 import spiderImage from "@/assets/spider.jpg";
 import tiefighter from "@/assets/tie-fighter.png";
-import watch2 from "@/assets/watch2.png";
+import Keyboard from "@/assets/Keyboard.png";
+import celine from "@/assets/celine.jpg";
+import FerreroRoacher from "@/assets/ferrero rocher.jpg";
+import { Description } from "@radix-ui/react-toast";
 
 const artworks = [
   {
@@ -17,8 +20,14 @@ const artworks = [
     description: "Product visualization with dynamic lighting and ice cubes",
     type: "image",
   },
+  {id: 2,
+    title: "Realistic Model",
+    image: celine,
+    Description: "Realistic cosplay model",
+    type: "image",
+  },
   {
-    id: 2,
+    id: 7,
     title: "Minimalist Watch",
     image: watchImage,
     description: "Elegant timepiece with neon lighting effects",
@@ -33,6 +42,14 @@ const artworks = [
   },
   {
     id: 4,
+    title: "Ferrero Rocher",
+    image: FerreroRoacher,
+    description: "3D Ferrero Rocher Design",
+    type: "image",
+  },
+
+  {
+    id: 8,
     title: "Spooky Spider",
     image: spiderImage,
     description: "Dark atmospheric render with dramatic lighting",
@@ -40,10 +57,10 @@ const artworks = [
   },
   {
     id: 5,
-    title: "Watch Animation",
-    video: "/watch-animation.mp4",
-    thumbnail: watch2,
-    description: "Animated watch render showcasing rotation and lighting",
+    title: "Keyboard Animation",
+    video: "/keyboard animation.mp4",
+    thumbnail: Keyboard,
+    description: "Animated RGB Keyboard render showcasing rotation and lighting",
     type: "video",
   },
   {

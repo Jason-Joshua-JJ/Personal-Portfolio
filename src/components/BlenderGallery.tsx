@@ -20,7 +20,8 @@ const artworks = [
     description: "Product visualization with dynamic lighting and ice cubes",
     type: "image",
   },
-  {id: 2,
+  {
+    id: 2,
     title: "Realistic Model",
     image: celine,
     Description: "Realistic cosplay model",
@@ -108,7 +109,7 @@ export default function BlenderGallery() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.08 }}
               onClick={() => setSelectedArtwork(artwork)}
-              className="relative group cursor-pointer rounded-xl overflow-hidden shadow-lg bg-gradient-to-b from-white/2 to-white/3"
+              className="relative group cursor-pointer rounded-xl overflow-hidden shadow-lg bg-card/30 border border-border/30"
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
@@ -132,7 +133,7 @@ export default function BlenderGallery() {
               </div>
 
               <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background/80 to-transparent">
-                <h3 className="text-xl font-bold mb-1 text-white">{artwork.title}</h3>
+                <h3 className="text-xl font-bold mb-1 text-foreground">{artwork.title}</h3>
                 <p className="text-sm text-muted-foreground">{artwork.description}</p>
               </div>
             </motion.div>
@@ -146,21 +147,21 @@ export default function BlenderGallery() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-3 rounded-full px-5 py-3 bg-white/4 border border-white/6 backdrop-blur-sm text-sm font-medium hover:scale-105 transition transform"
+            className="inline-flex items-center gap-3 rounded-full px-5 py-3 bg-secondary/30 border border-border/50 backdrop-blur-sm text-sm font-medium hover:scale-105 transition transform"
             aria-expanded={expanded}
             aria-controls="gallery-expanded"
             title={expanded ? "Show less gallery" : "Show more gallery"}
           >
             {/* Opacity-styled icon that matches site */}
-            <span className="flex items-center justify-center rounded-full w-9 h-9 bg-white/6 border border-white/8">
+            <span className="flex items-center justify-center rounded-full w-9 h-9 bg-secondary/50 border border-border/50">
               {expanded ? (
-                <ChevronUp className="w-5 h-5 text-white/90" />
+                <ChevronUp className="w-5 h-5 text-foreground" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-white/80" />
+                <ChevronDown className="w-5 h-5 text-foreground" />
               )}
             </span>
 
-            <span className="text-white/90">
+            <span className="text-foreground">
               {expanded ? "Show less" : `Show ${artworks.length - 3} more`}
             </span>
           </motion.button>

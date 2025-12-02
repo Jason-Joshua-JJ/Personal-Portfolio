@@ -150,7 +150,7 @@ function getSkillIcon(skill: string) {
   if (name.includes("git") || name.includes("github")) {
     return (
       <svg className="h-5 w-5 flex-none" viewBox="0 0 24 24" aria-hidden>
-        <path fill="#F1502F" d="M12 .5C5.65.5.87 5.28.87 11.63c0 4.72 3.05 8.71 7.28 10.12.53.1.72-.23.72-.51 0-.25-.01-1.08-.02-1.97-2.96.64-3.58-1.17-3.58-1.17-.48-1.23-1.17-1.56-1.17-1.56-.96-.66.07-.65.07-.65 1.07.08 1.63 1.1 1.63 1.1.95 1.62 2.5 1.15 3.11.88.09-.69.37-1.15.67-1.41-2.36-.27-4.84-1.18-4.84-5.22 0-1.15.41-2.08 1.08-2.82-.11-.27-.47-1.36.1-2.83 0 0 .88-.28 2.88 1.08a9.99 9.99 0 0 1 5.24 0c2-.36 2.88-1.08 2.88-1.08.57 1.47.21 2.56.1 2.83.67.74 1.08 1.67 1.08 2.82 0 4.04-2.49 4.95-4.86 5.21.38.33.72.97.72 1.96 0 1.42-.01 2.56-.01 2.91 0 .28.19.61.73.51C20.07 20.33 23.12 16.35 23.12 11.63 23.12 5.28 18.34.5 12 .5z"/>
+        <path fill="#F1502F" d="M12 .5C5.65.5.87 5.28.87 11.63c0 4.72 3.05 8.71 7.28 10.12.53.1.72-.23.72-.51 0-.25-.01-1.08-.02-1.97-2.96.64-3.58-1.17-3.58-1.17-.48-1.23-1.17-1.56-1.17-1.56-.96-.66.07-.65.07-.65 1.07.08 1.63 1.1 1.63 1.1.95 1.62 2.5 1.15 3.11.88.09-.69.37-1.15.67-1.41-2.36-.27-4.84-1.18-4.84-5.22 0-1.15.41-2.08 1.08-2.82-.11-.27-.47-1.36.1-2.83 0 0 .88-.28 2.88 1.08a9.99 9.99 0 0 1 5.24 0c2-.36 2.88-1.08 2.88-1.08.57 1.47.21 2.56.1 2.83.67.74 1.08 1.67 1.08 2.82 0 4.04-2.49 4.95-4.86 5.21.38.33.72.97.72 1.96 0 1.42-.01 2.56-.01 2.91 0 .28.19.61.73.51C20.07 20.33 23.12 16.35 23.12 11.63 23.12 5.28 18.34.5 12 .5z" />
       </svg>
     );
   }
@@ -161,7 +161,7 @@ function getSkillIcon(skill: string) {
 
 export default function Skills(): JSX.Element {
   return (
-    <section id="skills" className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
+    <section id="skills" className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary/5">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial="hidden"
@@ -190,7 +190,7 @@ export default function Skills(): JSX.Element {
             <motion.div
               key={category.category}
               variants={cardVariants}
-              className="relative overflow-hidden rounded-2xl border border-white/6 bg-gradient-to-b from-white/3 to-white/2 p-6 backdrop-blur-md"
+              className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/50 backdrop-blur-md shadow-sm"
               aria-labelledby={`skills-${idx}-title`}
             >
               {/* Accent strip */}
@@ -201,14 +201,14 @@ export default function Skills(): JSX.Element {
 
               {/* Header */}
               <div className="flex items-center gap-3 mb-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/3 border border-white/6 text-primary">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/50 border border-border/50 text-primary">
                   {category.icon}
                 </div>
                 <div>
-                  <h3 id={`skills-${idx}-title`} className="text-xl font-semibold text-white">
+                  <h3 id={`skills-${idx}-title`} className="text-xl font-semibold text-foreground">
                     {category.category}
                   </h3>
-                  <p className="text-sm text-muted-foreground/80">Selected tools & technologies</p>
+                  <p className="text-sm text-muted-foreground">Selected tools & technologies</p>
                 </div>
               </div>
 
@@ -224,7 +224,7 @@ export default function Skills(): JSX.Element {
                     variants={chipVariants}
                     whileHover={{ scale: 1.03, y: -3 }}
                     whileTap={{ scale: 0.98 }}
-                    className="group relative inline-flex items-center gap-3 rounded-full px-4 py-2 bg-gradient-to-b from-white/4 to-white/2 border border-white/6 shadow-sm hover:shadow-[0_8px_30px_rgba(0,217,255,0.08)] transition-all"
+                    className="group relative inline-flex items-center gap-3 rounded-full px-4 py-2 bg-secondary/30 border border-border/50 shadow-sm hover:shadow-[0_8px_30px_rgba(0,217,255,0.08)] transition-all"
                     aria-label={skill}
                     title={skill}
                     type="button"
@@ -234,7 +234,7 @@ export default function Skills(): JSX.Element {
                       {getSkillIcon(skill)}
                     </span>
 
-                    <span className="text-sm font-medium text-white">{skill}</span>
+                    <span className="text-sm font-medium text-foreground">{skill}</span>
 
                     {/* subtle animated highlight on hover */}
                     <span

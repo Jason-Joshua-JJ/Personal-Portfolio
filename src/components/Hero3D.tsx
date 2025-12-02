@@ -123,8 +123,12 @@ function CameraController({ mouseNorm, reduced }: { mouseNorm: [number, number];
 /* Titles */
 const TITLES = ["Full-Stack Developer", "Front-End Developer", "Data Engineer"];
 
+interface Hero3DProps {
+  onOpenTerminal: () => void;
+}
+
 /* Main component */
-export default function Hero3D(): JSX.Element {
+export default function Hero3D({ onOpenTerminal }: Hero3DProps): JSX.Element {
   // mouse normalized [-1,1]
   const [mouseNorm, setMouseNorm] = useState<[number, number]>([0, 0]);
   const [mouse3D, setMouse3D] = useState<THREE.Vector3 | null>(null);
@@ -233,6 +237,13 @@ export default function Hero3D(): JSX.Element {
             <a href="#projects" className="px-8 py-3 rounded-lg bg-primary text-primary-foreground font-semibold shadow-sm hover:shadow-[0_0_20px_rgba(0,217,255,0.45)] transition-all">
               View Projects
             </a>
+            <button
+              onClick={onOpenTerminal}
+              className="px-8 py-3 rounded-lg glass font-semibold hover:bg-white/10 transition-colors flex items-center gap-2 group"
+            >
+              <span className="text-primary group-hover:text-white transition-colors">&gt;_</span>
+              Launch Terminal
+            </button>
             <a href="#contact" className="px-8 py-3 rounded-lg glass font-semibold hover:bg-white/10 transition-colors">
               Get In Touch
             </a>

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
   { name: "About", href: "#about" },
@@ -12,7 +13,11 @@ const navItems = [
   { name: "Contact", href: "#contact" },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  onOpenTerminal: () => void;
+}
+
+export default function Navbar({ onOpenTerminal }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -61,6 +66,31 @@ export default function Navbar() {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
               </a>
             ))}
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
+            {/* Terminal Button */}
+            <button
+              onClick={onOpenTerminal}
+              className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 hover:shadow-[0_0_15px_rgba(0,217,255,0.3)] transition-all"
+              title="Open Terminal"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="4 17 10 11 4 5" />
+                <line x1="12" y1="19" x2="20" y2="19" />
+              </svg>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -97,6 +127,32 @@ export default function Navbar() {
                   {item.name}
                 </a>
               ))}
+              <button
+                onClick={() => {
+                  onOpenTerminal();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full text-left flex items-center gap-2 px-3 py-2 text-base font-medium text-primary hover:bg-white/5 rounded-md transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="4 17 10 11 4 5" />
+                  <line x1="12" y1="19" x2="20" y2="19" />
+                </svg>
+                Open Terminal
+              </button>
+              <div className="px-3 py-2">
+                <ThemeToggle />
+              </div>
             </div>
           </motion.div>
         )}

@@ -22,7 +22,7 @@ export default function About() {
 
   return (
     <section id="about" className="py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -47,11 +47,11 @@ export default function About() {
             <p className="text-lg text-muted-foreground leading-relaxed">
               I am <span className="text-primary font-semibold">Jason Joshua</span> — a developer passionate about building interactive web applications, scalable systems, visually appealing front-end experiences, and cloud-native data pipelines.
             </p>
-            
+
             <p className="text-lg text-muted-foreground leading-relaxed">
               My background spans full-stack development, AWS-based ETL engineering, Snowflake, Python automation, and front-end engineering using React and Three.js.
             </p>
-            
+
             <p className="text-lg text-muted-foreground leading-relaxed">
               Although currently working in testing (unit testing, manual testing, data validation), I specialize in development and I'm transitioning fully into a developer role where I can leverage both creativity and engineering.
             </p>

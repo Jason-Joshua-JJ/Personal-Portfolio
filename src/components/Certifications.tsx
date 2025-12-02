@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 export default function Certifications() {
   return (
     <section id="certifications" className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

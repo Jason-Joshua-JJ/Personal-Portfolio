@@ -56,31 +56,31 @@ export const projects = [
   },
   {
     id: 5,
-    title: "Real-Time Dev Chat App",
-    description: "Real-time messaging application with Socket.io for instant communication, user presence detection, and typing indicators. Built with React and Node.js.",
-    tech: ["React", "Node.js", "Socket.io", "Express", "MongoDB"],
-    category: "Full-Stack",
+    title: "SaaS Project Management",
+    description: "A comprehensive project management tool designed for agile teams. Features task tracking, team collaboration, Kanban boards, and a real-time analytics dashboard for monitoring project health.",
+    tech: ["React", "Node.js", "MongoDB", "Redux", "Express", "D3.js"],
+    category: "SaaS/Full-Stack",
     github: "https://github.com/Jason-Joshua-JJ",
     features: [
-      "Real-time messaging",
-      "User presence detection",
-      "Typing indicators",
-      "Message history"
+      "Task & Sprint Management",
+      "Real-time Analytics Dashboard",
+      "Team Collaboration Tools",
+      "Kanban & List Views"
     ]
   },
   {
     id: 6,
-    title: "Developer ETL Dashboard",
-    description: "Modern dashboard for monitoring ETL pipeline statuses with real-time charts and metrics. Built with Next.js/Vite frontend and interactive data visualizations.",
-    tech: ["React", "Vite", "Recharts", "Tailwind CSS", "REST API"],
-    category: "Data Visualization",
+    title: "E-commerce Shoe Store",
+    description: "A premium full-stack e-commerce platform for luxury footwear. Includes advanced product filtering, secure payment processing, user authentication, and an admin dashboard for inventory management.",
+    tech: ["React", "Node.js", "MongoDB", "Express", "Stripe", "Tailwind CSS"],
+    category: "E-commerce/Full-Stack",
     demo: "https://example.com",
     github: "https://github.com/Jason-Joshua-JJ",
     features: [
-      "Real-time pipeline monitoring",
-      "Interactive charts",
-      "Status notifications",
-      "Performance metrics"
+      "Advanced Product Filtering",
+      "Secure Stripe Checkout",
+      "User Authentication (JWT)",
+      "Admin Inventory Dashboard"
     ]
   }
 ];

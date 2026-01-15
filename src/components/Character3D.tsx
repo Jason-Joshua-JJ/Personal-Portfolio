@@ -5,26 +5,30 @@ import { useGLTF, PerspectiveCamera, OrbitControls, Environment, useAnimations }
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
 
-type ActionName = 'Idle' | 'Walk' | 'Run' | 'Survey'; // Available animations in this model
+type ActionName = 'Idle' | 'Walking' | 'Run' | 'Dance' | 'Wave'; // Available animations in Robot Expressive
 
 function CuteCharacter({ action }: { action: string }) {
     const group = useRef<THREE.Group>(null);
-    // Using a cute low-poly fox character
-    const { scene, animations } = useGLTF('https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/fox-animated/model.gltf');
+    // Using the "Green One" - Robot Expressive
+    const { scene, animations } = useGLTF('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/RobotExpressive/RobotExpressive.glb');
     const { actions } = useAnimations(animations, group);
 
     useEffect(() => {
         // Stop all current actions
         Object.values(actions).forEach(a => a?.fadeOut(0.5));
 
-        let animToPlay = 'Survey'; // Default idle-ish
+        let animToPlay = 'Idle'; // Default
 
         if (action === 'moonwalk') {
-            animToPlay = 'Walk';
+            animToPlay = 'Walking';
+        } else if (action === 'startup_walk') {
+            animToPlay = 'Walking';
         } else if (action === 'floss') {
-            animToPlay = 'Survey'; // Using Survey as a "Dance" placeholder since this model lacks Floss
+            animToPlay = 'Dance'; // Map floss to Dance
         } else if (action === 'idle') {
-            animToPlay = 'Survey';
+            animToPlay = 'Idle';
+        } else if (action === 'howl') {
+            animToPlay = 'Wave'; // Map howl to Wave
         }
 
         const actionObj = actions[animToPlay];
@@ -49,8 +53,9 @@ function CuteCharacter({ action }: { action: string }) {
         if (group.current) {
             // Gentle bobbing for idle
             if (action === 'idle') {
-                group.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.1 - 0.5;
-                group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+                group.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.1 - 1;
+                // Face forward + slight rotation breath
+                group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1;
             }
             // Moonwalk movement
             else if (action === 'moonwalk') {
@@ -58,18 +63,33 @@ function CuteCharacter({ action }: { action: string }) {
                 const t = state.clock.elapsedTime;
                 group.current.position.x = Math.sin(t) * 1.5; // Move back and forth
                 group.current.rotation.y = Math.PI / 2; // Face side
-                group.current.position.y = -0.5;
+                group.current.position.y = -1;
+            }
+            // Startup Walk movement (Back to Front)
+            else if (action === 'startup_walk') {
+                const t = state.clock.elapsedTime;
+                // Move from back (z=-2) to front (z=0) roughly over the 1.5s
+                // Clamp or limit might be good but simple lerp works for short duration
+                group.current.position.z = -2 + (t * 1.5);
+                group.current.position.x = 0;
+                group.current.rotation.y = 0; // Face forward
+                group.current.position.y = -1;
             }
             // Floss/Dance movement
             else if (action === 'floss') {
-                group.current.position.y = Math.abs(Math.sin(state.clock.elapsedTime * 5)) * 0.2 - 0.5; // Bouncing
+                group.current.position.y = Math.abs(Math.sin(state.clock.elapsedTime * 5)) * 0.2 - 1; // Bouncing
                 group.current.rotation.y = Math.sin(state.clock.elapsedTime * 2) * 0.5;
+            }
+            // Howl (Wave) 
+            else if (action === 'howl') {
+                group.current.position.y = -1;
+                group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
             }
         }
     });
 
     return (
-        <group ref={group} position={[0, -0.5, 0]} scale={0.02}>
+        <group ref={group} position={[0, -1, 0]} scale={0.45}>
             <primitive object={scene} />
         </group>
     );
@@ -77,11 +97,47 @@ function CuteCharacter({ action }: { action: string }) {
 
 interface Character3DProps {
     onOpenTerminal: () => void;
+    isPartyMode?: boolean;
 }
 
-export default function Character3D({ onOpenTerminal }: Character3DProps) {
+export default function Character3D({ onOpenTerminal, isPartyMode }: Character3DProps) {
     const [characterAction, setCharacterAction] = useState<string>('idle');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    // Startup Sequence
+    useEffect(() => {
+        // 1. Walk Sideways
+        setCharacterAction('startup_walk');
+
+        const walkTimer = setTimeout(() => {
+            // 2. Howl
+            setCharacterAction('howl');
+        }, 1500); // Walk for 1.5s
+
+        const howlTimer = setTimeout(() => {
+            // 3. Idle
+            setCharacterAction('idle');
+        }, 3500); // Howl for 2s (1.5 + 2.0 = 3.5)
+
+        return () => {
+            clearTimeout(walkTimer);
+            clearTimeout(howlTimer);
+        };
+    }, []);
+
+    useEffect(() => {
+        // Initial startup sequence overrides this temporarily if we wanted complex logic, 
+        // but simple toggle is fine. If party mode is toggled effectively, it wins.
+        if (isPartyMode) {
+            setCharacterAction('floss');
+        } else if (characterAction === 'floss') {
+            // Only reset to idle if we were flossing (don't interrupt startup sequence if valid, 
+            // but actually startup runs on mount, isPartyMode change comes later usually. 
+            // If isPartyMode is true on mount, this effect runs.
+            // Let's just say isPartyMode takes precedence.
+            setCharacterAction('idle');
+        }
+    }, [isPartyMode]);
 
     return (
         <section className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-background via-background to-secondary/10">
@@ -253,24 +309,9 @@ export default function Character3D({ onOpenTerminal }: Character3DProps) {
             </div>
 
 
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1, y: [0, 10, 0] }}
-                transition={{
-                    opacity: { delay: 2, duration: 0.8 },
-                    y: { duration: 2, repeat: Infinity },
-                }}
-                className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
-            >
-                <div className="flex flex-col items-center gap-2 text-muted-foreground select-none">
-                    <span className="text-sm">Scroll Down</span>
-                    <div className="w-6 h-10 border-2 border-primary rounded-full flex items-start justify-center p-2">
-                        <div className="w-1 h-3 bg-primary rounded-full" />
-                    </div>
-                </div>
-            </motion.div>
+
         </section >
     );
 }
 
-useGLTF.preload('https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/fox-animated/model.gltf');
+useGLTF.preload('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/RobotExpressive/RobotExpressive.glb');

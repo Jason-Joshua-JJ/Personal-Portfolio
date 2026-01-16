@@ -5,13 +5,14 @@ import { useGLTF, PerspectiveCamera, OrbitControls, Environment, useAnimations }
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
-
-type ActionName = 'Idle' | 'Walking' | 'Run' | 'Dance' | 'Wave'; // Available animations in Robot Expressive
+import { ASSETS, ANIMATIONS, ACTIONS } from '../constants/assets';
+import CharacterControls from './CharacterControls';
+import Loader from './ui/Loader';
+import SceneErrorBoundary from './SceneErrorBoundary';
 
 function CuteCharacter({ action }: { action: string }) {
     const group = useRef<THREE.Group>(null);
-    // Using the "Green One" - Robot Expressive
-    const { scene, animations } = useGLTF('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/RobotExpressive/RobotExpressive.glb');
+    const { scene, animations } = useGLTF(ASSETS.MODELS.ROBOT_EXPRESSIVE);
     const { actions } = useAnimations(animations, group);
     const { clock } = useThree();
     const startTimeRef = useRef(0);
@@ -20,19 +21,19 @@ function CuteCharacter({ action }: { action: string }) {
         // Stop all current actions
         Object.values(actions).forEach(a => a?.fadeOut(0.5));
 
-        let animToPlay = 'Idle'; // Default
+        let animToPlay = ANIMATIONS.IDLE; // Default
 
-        if (action === 'moonwalk') {
-            animToPlay = 'Walking';
-        } else if (action === 'startup_walk') {
-            animToPlay = 'Walking';
+        if (action === ACTIONS.MOONWALK) {
+            animToPlay = ANIMATIONS.WALKING;
+        } else if (action === ACTIONS.STARTUP_WALK) {
+            animToPlay = ANIMATIONS.WALKING;
             startTimeRef.current = clock.elapsedTime;
-        } else if (action === 'floss') {
-            animToPlay = 'Dance'; // Map floss to Dance
-        } else if (action === 'idle') {
-            animToPlay = 'Idle';
-        } else if (action === 'howl') {
-            animToPlay = 'Wave'; // Map howl to Wave
+        } else if (action === ACTIONS.FLOSS) {
+            animToPlay = ANIMATIONS.DANCE; // Map floss to Dance
+        } else if (action === ACTIONS.IDLE) {
+            animToPlay = ANIMATIONS.IDLE;
+        } else if (action === ACTIONS.HOWL) {
+            animToPlay = ANIMATIONS.WAVE; // Map howl to Wave
         }
 
         const actionObj = actions[animToPlay];
@@ -40,7 +41,7 @@ function CuteCharacter({ action }: { action: string }) {
             actionObj.reset().fadeIn(0.5).play();
 
             // If moonwalking, we might want to adjust timeScale to make it look like sliding back
-            if (action === 'moonwalk') {
+            if (action === ACTIONS.MOONWALK) {
                 actionObj.timeScale = -1; // Play walk backwards
             } else {
                 actionObj.timeScale = 1;
@@ -56,13 +57,13 @@ function CuteCharacter({ action }: { action: string }) {
     useFrame((state) => {
         if (group.current) {
             // Gentle bobbing for idle
-            if (action === 'idle') {
+            if (action === ACTIONS.IDLE) {
                 group.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.1 - 1;
                 // Face forward + slight rotation breath
                 group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1;
             }
             // Moonwalk movement
-            else if (action === 'moonwalk') {
+            else if (action === ACTIONS.MOONWALK) {
                 // Slide across screen
                 const t = state.clock.elapsedTime;
                 group.current.position.x = Math.sin(t) * 1.5; // Move back and forth
@@ -70,22 +71,21 @@ function CuteCharacter({ action }: { action: string }) {
                 group.current.position.y = -1;
             }
             // Startup Walk movement (Back to Front)
-            else if (action === 'startup_walk') {
+            else if (action === ACTIONS.STARTUP_WALK) {
                 const t = state.clock.elapsedTime - startTimeRef.current;
                 // Move from back (z=-2) to front (z=0) roughly over the 1.5s
-                // Clamp or limit might be good but simple lerp works for short duration
                 group.current.position.z = -2 + (t * 1.5);
                 group.current.position.x = 0;
                 group.current.rotation.y = 0; // Face forward
                 group.current.position.y = -1;
             }
             // Floss/Dance movement
-            else if (action === 'floss') {
+            else if (action === ACTIONS.FLOSS) {
                 group.current.position.y = Math.abs(Math.sin(state.clock.elapsedTime * 5)) * 0.2 - 1; // Bouncing
                 group.current.rotation.y = Math.sin(state.clock.elapsedTime * 2) * 0.5;
             }
             // Howl (Wave) 
-            else if (action === 'howl') {
+            else if (action === ACTIONS.HOWL) {
                 group.current.position.y = -1;
                 group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
             }
@@ -105,22 +105,22 @@ interface Character3DProps {
 }
 
 export default function Character3D({ onOpenTerminal, isPartyMode }: Character3DProps) {
-    const [characterAction, setCharacterAction] = useState<string>('idle');
+    const [characterAction, setCharacterAction] = useState<string>(ACTIONS.IDLE);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // Startup Sequence
     useEffect(() => {
         // 1. Walk Sideways
-        setCharacterAction('startup_walk');
+        setCharacterAction(ACTIONS.STARTUP_WALK);
 
         const walkTimer = setTimeout(() => {
             // 2. Howl
-            setCharacterAction('howl');
+            setCharacterAction(ACTIONS.HOWL);
         }, 1500); // Walk for 1.5s
 
         const howlTimer = setTimeout(() => {
             // 3. Idle
-            setCharacterAction('idle');
+            setCharacterAction(ACTIONS.IDLE);
         }, 3500); // Howl for 2s (1.5 + 2.0 = 3.5)
 
         return () => {
@@ -130,16 +130,10 @@ export default function Character3D({ onOpenTerminal, isPartyMode }: Character3D
     }, []);
 
     useEffect(() => {
-        // Initial startup sequence overrides this temporarily if we wanted complex logic, 
-        // but simple toggle is fine. If party mode is toggled effectively, it wins.
         if (isPartyMode) {
-            setCharacterAction('floss');
-        } else if (characterAction === 'floss') {
-            // Only reset to idle if we were flossing (don't interrupt startup sequence if valid, 
-            // but actually startup runs on mount, isPartyMode change comes later usually. 
-            // If isPartyMode is true on mount, this effect runs.
-            // Let's just say isPartyMode takes precedence.
-            setCharacterAction('idle');
+            setCharacterAction(ACTIONS.FLOSS);
+        } else if (characterAction === ACTIONS.FLOSS) {
+            setCharacterAction(ACTIONS.IDLE);
         }
     }, [isPartyMode]);
 
@@ -205,117 +199,46 @@ export default function Character3D({ onOpenTerminal, isPartyMode }: Character3D
                     </motion.div>
                 </div>
 
-                {/* Right Side - 3D Character */}
                 <div className="absolute lg:relative right-0 w-full lg:w-1/2 h-full">
-                    <Suspense fallback={
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-center space-y-4">
-                                <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-                                <p className="text-muted-foreground">Loading...</p>
+                    <SceneErrorBoundary>
+                        <Suspense fallback={
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <Loader />
                             </div>
-                        </div>
-                    }>
-                        <Canvas shadows className="w-full h-full">
-                            <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
+                        }>
+                            <Canvas shadows className="w-full h-full">
+                                <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
 
-                            <ambientLight intensity={0.8} />
-                            <directionalLight position={[5, 5, 5]} intensity={1} />
-                            <pointLight position={[-3, 3, 3]} intensity={0.5} color="#00d9ff" />
+                                <ambientLight intensity={0.8} />
+                                <directionalLight position={[5, 5, 5]} intensity={1} />
+                                <pointLight position={[-3, 3, 3]} intensity={0.5} color="#00d9ff" />
 
-                            <Environment preset="sunset" />
+                                <Environment preset="sunset" />
 
-                            <CuteCharacter action={characterAction} />
+                                <CuteCharacter action={characterAction} />
 
-                            <OrbitControls
-                                enableZoom={false}
-                                enablePan={false}
-                                minPolarAngle={Math.PI / 3}
-                                maxPolarAngle={Math.PI / 2}
-                            />
-                        </Canvas>
-                    </Suspense>
-
+                                <OrbitControls
+                                    enableZoom={false}
+                                    enablePan={false}
+                                    minPolarAngle={Math.PI / 3}
+                                    maxPolarAngle={Math.PI / 2}
+                                />
+                            </Canvas>
+                        </Suspense>
+                    </SceneErrorBoundary>
                 </div>
             </div>
 
             {/* Interaction Panel Trigger & Content */}
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 z-50 flex items-center">
-                {/* Toggle Button */}
-                <button
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    className="bg-background/80 backdrop-blur-md p-3 rounded-l-xl border-y border-l border-white/10 shadow-lg hover:bg-background transition-colors group relative"
-                    aria-label="Toggle Interaction Menu"
-                >
-                    <div className={`absolute inset-0 bg-primary/20 rounded-l-xl animate-pulse ${isMenuOpen ? 'hidden' : 'block'}`} />
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className={`text-primary transition-transform duration-300 relative z-10 ${isMenuOpen ? 'rotate-180' : ''}`}
-                    >
-                        <path d="m15 18-6-6 6-6" />
-                    </svg>
-                </button>
-
-                {/* Slide-out Panel */}
-                <motion.div
-                    initial={{ x: '100%', opacity: 0 }}
-                    animate={{
-                        x: isMenuOpen ? 0 : '100%',
-                        opacity: isMenuOpen ? 1 : 0
-                    }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="bg-background/80 backdrop-blur-md border-y border-l border-white/10 p-6 shadow-2xl h-auto min-h-[300px] flex flex-col justify-center gap-4 rounded-l-2xl origin-right"
-                    style={{ display: isMenuOpen ? 'flex' : 'none' }} // Optimization to hide when closed
-                >
-                    <div className="space-y-1 mb-2">
-                        <h3 className="font-bold text-lg text-foreground">Interactions</h3>
-                        <p className="text-xs text-muted-foreground">Control the character</p>
-                    </div>
-
-                    <div className="space-y-3 w-48">
-                        <button
-                            onClick={() => setCharacterAction('moonwalk')}
-                            className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${characterAction === 'moonwalk'
-                                ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
-                                : 'bg-white/5 hover:bg-white/10 text-foreground'
-                                }`}
-                        >
-                            <span>🚶</span> Moonwalk
-                        </button>
-                        <button
-                            onClick={() => setCharacterAction('floss')}
-                            className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${characterAction === 'floss'
-                                ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
-                                : 'bg-white/5 hover:bg-white/10 text-foreground'
-                                }`}
-                        >
-                            <span>💃</span> Fortnite Floss
-                        </button>
-                        <div className="h-px bg-white/10 my-2" />
-                        <button
-                            onClick={() => setCharacterAction('idle')}
-                            className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${characterAction === 'idle'
-                                ? 'bg-secondary text-secondary-foreground'
-                                : 'bg-white/5 hover:bg-white/10 text-foreground'
-                                }`}
-                        >
-                            <span>🛑</span> Reset
-                        </button>
-                    </div>
-                </motion.div>
-            </div>
-
-
+            <CharacterControls
+                isOpen={isMenuOpen}
+                setIsOpen={setIsMenuOpen}
+                currentAction={characterAction}
+                onActionChange={setCharacterAction}
+            />
 
         </section >
     );
 }
 
-useGLTF.preload('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/RobotExpressive/RobotExpressive.glb');
+useGLTF.preload(ASSETS.MODELS.ROBOT_EXPRESSIVE);

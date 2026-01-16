@@ -39,15 +39,15 @@ export default function Projects() {
                   {project.category}
                 </span>
               </div>
-              
+
               <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
                 {project.title}
               </h3>
-              
+
               <p className="text-muted-foreground mb-4 line-clamp-3">
                 {project.description}
               </p>
-              
+
               <div className="flex flex-wrap gap-2 mb-4">
                 {project.tech.slice(0, 3).map((tech) => (
                   <Badge key={tech} variant="secondary" className="text-xs">
@@ -60,7 +60,7 @@ export default function Projects() {
                   </Badge>
                 )}
               </div>
-              
+
               <div className="flex gap-3 text-sm">
                 <span className="text-primary hover:underline">View Details →</span>
               </div>
@@ -76,7 +76,7 @@ export default function Projects() {
                 {selectedProject?.title}
               </DialogTitle>
             </DialogHeader>
-            
+
             {selectedProject && (
               <div className="space-y-6">
                 <div>

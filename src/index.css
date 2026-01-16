@@ -8,56 +8,59 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* "Deep Silver" Light Mode - unmistakably NOT white */
+    --background: 220 30% 90%;
+    /* Much darker silver/grey */
+    --foreground: 222 47% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Pure white remains to pop */
+    --card-foreground: 222 47% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222 47% 10%;
 
     --primary: 142 76% 36%;
     --primary-foreground: 355.7 100% 97.3%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 30% 85%;
+    /* Darker accent */
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 210 40% 96.1%;
+    --muted: 220 30% 85%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 220 30% 85%;
+    --accent-foreground: 222 47% 11%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 220 30% 80%;
+    /* Visible borders */
+    --input: 220 30% 80%;
     --ring: 142 76% 36%;
 
     --radius: 0.75rem;
 
     /* Light mode neon/accent adjustments */
     --neon-cyan: 142 76% 36%;
-    /* Darker green for visibility on white */
     --neon-blue: 160 84% 39%;
     --neon-purple: 262 83% 58%;
-    --deep-navy: 222 47% 95%;
-    /* Light alternative */
-    --darker-navy: 222 47% 98%;
+    --deep-navy: 222 47% 90%;
+    --darker-navy: 222 47% 93%;
 
-    --glow-sm: 0 0 10px rgba(0, 0, 0, 0.1);
-    --glow-md: 0 0 20px rgba(0, 0, 0, 0.1);
-    --glow-lg: 0 0 40px rgba(0, 0, 0, 0.1);
+    --glow-sm: 0 0 10px rgba(0, 0, 0, 0.05);
+    --glow-md: 0 0 20px rgba(0, 0, 0, 0.08);
+    --glow-lg: 0 0 40px rgba(0, 0, 0, 0.15);
 
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 220 30% 90%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
+    --sidebar-border: 220 25% 88%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -117,8 +120,17 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
   }
 
   html {

@@ -2,6 +2,7 @@
 import { useRef, Suspense, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, PerspectiveCamera, OrbitControls, Environment, useAnimations } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
 
@@ -12,6 +13,8 @@ function CuteCharacter({ action }: { action: string }) {
     // Using the "Green One" - Robot Expressive
     const { scene, animations } = useGLTF('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/RobotExpressive/RobotExpressive.glb');
     const { actions } = useAnimations(animations, group);
+    const { clock } = useThree();
+    const startTimeRef = useRef(0);
 
     useEffect(() => {
         // Stop all current actions
@@ -23,6 +26,7 @@ function CuteCharacter({ action }: { action: string }) {
             animToPlay = 'Walking';
         } else if (action === 'startup_walk') {
             animToPlay = 'Walking';
+            startTimeRef.current = clock.elapsedTime;
         } else if (action === 'floss') {
             animToPlay = 'Dance'; // Map floss to Dance
         } else if (action === 'idle') {
@@ -46,7 +50,7 @@ function CuteCharacter({ action }: { action: string }) {
         return () => {
             actionObj?.fadeOut(0.5);
         };
-    }, [action, actions]);
+    }, [action, actions, clock]);
 
     // Animation logic
     useFrame((state) => {
@@ -67,7 +71,7 @@ function CuteCharacter({ action }: { action: string }) {
             }
             // Startup Walk movement (Back to Front)
             else if (action === 'startup_walk') {
-                const t = state.clock.elapsedTime;
+                const t = state.clock.elapsedTime - startTimeRef.current;
                 // Move from back (z=-2) to front (z=0) roughly over the 1.5s
                 // Clamp or limit might be good but simple lerp works for short duration
                 group.current.position.z = -2 + (t * 1.5);

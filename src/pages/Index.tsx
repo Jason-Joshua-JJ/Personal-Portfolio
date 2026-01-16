@@ -37,22 +37,18 @@ const Index = () => {
           </>
         )}
 
+
         <MiniBot color="#60a5fa" direction="left" delay={0.5} />
         <About />
 
-        <MiniBot color="#f472b6" direction="right" delay={0} />
         <Skills />
 
-        <MiniBot color="#a78bfa" direction="left" delay={0.2} />
         <Projects />
 
-        <MiniBot color="#34d399" direction="right" delay={0.5} />
         <Certifications />
 
-        <MiniBot color="#fbbf24" direction="left" delay={0} />
         <BlenderGallery />
 
-        <MiniBot color="#f87171" direction="right" delay={0.3} />
         <Contact />
       </main>
       <Footer />

@@ -64,8 +64,8 @@ export default function CharacterControls({
                     <button
                         onClick={() => onActionChange(ACTIONS.MOONWALK)}
                         className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${currentAction === ACTIONS.MOONWALK
-                                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                                : "bg-white/5 hover:bg-white/10 text-foreground"
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                            : "bg-white/5 hover:bg-white/10 text-foreground"
                             }`}
                     >
                         <span>🚶</span> Moonwalk
@@ -73,18 +73,36 @@ export default function CharacterControls({
                     <button
                         onClick={() => onActionChange(ACTIONS.FLOSS)}
                         className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${currentAction === ACTIONS.FLOSS
-                                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                                : "bg-white/5 hover:bg-white/10 text-foreground"
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                            : "bg-white/5 hover:bg-white/10 text-foreground"
                             }`}
                     >
                         <span>💃</span> Fortnite Floss
+                    </button>
+                    <button
+                        onClick={() => onActionChange(ACTIONS.JUMP)}
+                        className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${currentAction === ACTIONS.JUMP
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                            : "bg-white/5 hover:bg-white/10 text-foreground"
+                            }`}
+                    >
+                        <span>✨</span> Super Jump
+                    </button>
+                    <button
+                        onClick={() => onActionChange(ACTIONS.PAINT)}
+                        className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${currentAction === ACTIONS.PAINT
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                            : "bg-white/5 hover:bg-white/10 text-foreground"
+                            }`}
+                    >
+                        <span>🎨</span> Paint Attack
                     </button>
                     <div className="h-px bg-white/10 my-2" />
                     <button
                         onClick={() => onActionChange(ACTIONS.IDLE)}
                         className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center gap-3 ${currentAction === ACTIONS.IDLE
-                                ? "bg-secondary text-secondary-foreground"
-                                : "bg-white/5 hover:bg-white/10 text-foreground"
+                            ? "bg-secondary text-secondary-foreground"
+                            : "bg-white/5 hover:bg-white/10 text-foreground"
                             }`}
                     >
                         <span>🛑</span> Reset

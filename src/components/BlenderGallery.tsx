@@ -1,7 +1,7 @@
-// src/components/BlenderGallery.tsx
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Play, ChevronDown, ChevronUp } from "lucide-react";
+import { X, Play, ChevronDown } from "lucide-react";
 import redBullImage from "@/assets/red-bull.jpg";
 import watchImage from "@/assets/watch.png";
 import mushroomImage from "@/assets/mushroom.jpg";
@@ -77,138 +77,140 @@ const artworks = [
 export default function BlenderGallery() {
   // selected artwork for lightbox
   const [selectedArtwork, setSelectedArtwork] = useState<typeof artworks[0] | null>(null);
-  // collapsed by default (show only first 3)
-  const [expanded, setExpanded] = useState(false);
 
-  const visibleArtworks = expanded ? artworks : artworks.slice(0, 3);
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, scale: 0.8, y: 20 },
+    show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 50, damping: 10 } }
+  };
 
   return (
-    <section id="gallery" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="gallery" className="py-20 px-4 sm:px-6 lg:px-8 bg-background min-h-screen">
       <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-12">
+          <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors group">
+            <div className="p-2 rounded-full bg-secondary/30 group-hover:bg-primary/20 transition-colors">
+              <ChevronDown className="w-5 h-5 rotate-90" />
+            </div>
+            <span className="font-medium">Back to Home</span>
+          </Link>
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
+          className="text-center"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">
             3D Artwork <span className="gradient-text">Gallery</span>
           </h2>
-          <p className="text-muted-foreground text-center mb-4">
-            Blender renders, animations, and creative projects
+          <p className="text-muted-foreground mb-8">
+            Immersive collection of Blender renders and creative projects
           </p>
           <div className="w-20 h-1 bg-primary mx-auto mb-16" />
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {visibleArtworks.map((artwork, index) => (
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+          {artworks.map((artwork) => (
             <motion.div
               key={artwork.id}
-              initial={{ opacity: 0, scale: 0.96 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.08 }}
+              variants={item}
               onClick={() => setSelectedArtwork(artwork)}
-              className="relative group cursor-pointer rounded-xl overflow-hidden shadow-lg bg-card/30 border border-border/30"
+              className="relative group cursor-pointer rounded-xl overflow-hidden shadow-lg bg-card/30 border border-border/30 hover:shadow-[0_0_30px_rgba(0,217,255,0.25)] transition-all duration-300"
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") setSelectedArtwork(artwork);
               }}
+              whileHover={{ y: -5, scale: 1.02 }}
             >
-              <div className="aspect-square relative">
+              <div className="aspect-square relative overflow-hidden">
                 <img
                   src={artwork.type === "video" ? artwork.thumbnail : artwork.image}
                   alt={artwork.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-0 group-hover:opacity-70 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-0 group-hover:opacity-80 transition-opacity duration-300" />
                 {artwork.type === "video" && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-14 h-14 bg-primary/85 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <div className="w-14 h-14 bg-primary/85 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(0,217,255,0.5)]">
                       <Play className="w-7 h-7 text-white ml-0.5" />
                     </div>
                   </div>
                 )}
-              </div>
 
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background/80 to-transparent">
-                <h3 className="text-xl font-bold mb-1 text-foreground">{artwork.title}</h3>
-                <p className="text-sm text-muted-foreground">{artwork.description}</p>
+                {/* Hover Overlay Details */}
+                <div className="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-4 group-hover:translate-y-0 text-left">
+                  <span className="text-primary font-bold text-sm tracking-widest uppercase mb-1">{artwork.type}</span>
+                  <h3 className="text-2xl font-bold text-white mb-2 shadow-black drop-shadow-md">{artwork.title}</h3>
+                  <p className="text-sm text-gray-200 line-clamp-2 drop-shadow-md">{artwork.description}</p>
+                </div>
               </div>
             </motion.div>
           ))}
-        </div>
-
-        {/* Expand / Collapse control */}
-        <div className="mt-8 flex justify-center">
-          <motion.button
-            onClick={() => setExpanded((s) => !s)}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-3 rounded-full px-5 py-3 bg-secondary/30 border border-border/50 backdrop-blur-sm text-sm font-medium hover:scale-105 transition transform"
-            aria-expanded={expanded}
-            aria-controls="gallery-expanded"
-            title={expanded ? "Show less gallery" : "Show more gallery"}
-          >
-            {/* Opacity-styled icon that matches site */}
-            <span className="flex items-center justify-center rounded-full w-9 h-9 bg-secondary/50 border border-border/50">
-              {expanded ? (
-                <ChevronUp className="w-5 h-5 text-foreground" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-foreground" />
-              )}
-            </span>
-
-            <span className="text-foreground">
-              {expanded ? "Show less" : `Show ${artworks.length - 3} more`}
-            </span>
-          </motion.button>
-        </div>
+        </motion.div>
 
         {/* Lightbox Modal */}
         <AnimatePresence>
           {selectedArtwork && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+              animate={{ opacity: 1, backdropFilter: "blur(8px)" }}
+              exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
               onClick={() => setSelectedArtwork(null)}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80"
             >
               <button
                 onClick={() => setSelectedArtwork(null)}
                 className="absolute top-4 right-4 p-2 text-white hover:bg-white/10 rounded-lg transition-colors z-10"
                 aria-label="Close gallery modal"
               >
-                <X className="w-6 h-6" />
+                <X className="w-8 h-8 drop-shadow-lg" />
               </button>
 
               <motion.div
-                initial={{ scale: 0.96 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.96 }}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ type: "spring", damping: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="max-w-5xl w-full"
+                className="max-w-6xl w-full max-h-[90vh] flex flex-col overflow-hidden bg-card/10 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl"
               >
-                {selectedArtwork.type === "video" ? (
-                  <video
-                    src={selectedArtwork.video}
-                    controls
-                    autoPlay
-                    className="w-full rounded-lg shadow-2xl"
-                  />
-                ) : (
-                  <img
-                    src={selectedArtwork.image}
-                    alt={selectedArtwork.title}
-                    className="w-full rounded-lg shadow-2xl"
-                  />
-                )}
-                <div className="mt-4 text-center">
-                  <h3 className="text-2xl font-bold text-white mb-2">{selectedArtwork.title}</h3>
-                  <p className="text-gray-400">{selectedArtwork.description}</p>
+                <div className="relative flex-1 bg-black/50 flex items-center justify-center overflow-hidden">
+                  {selectedArtwork.type === "video" ? (
+                    <video
+                      src={selectedArtwork.video}
+                      controls
+                      autoPlay
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  ) : (
+                    <img
+                      src={selectedArtwork.image}
+                      alt={selectedArtwork.title}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  )}
+                </div>
+
+                <div className="p-6 bg-background/95 border-t border-white/5">
+                  <h3 className="text-2xl font-bold text-foreground mb-2">{selectedArtwork.title}</h3>
+                  <p className="text-muted-foreground">{selectedArtwork.description}</p>
                 </div>
               </motion.div>
             </motion.div>

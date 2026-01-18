@@ -1,5 +1,6 @@
-import { motion } from 'framer-motion';
 import { Code, Database, Palette } from 'lucide-react';
+import ScrollFloat from './ScrollFloat';
+import ScrollReveal from './ScrollReveal';
 
 export default function About() {
   const highlights = [
@@ -23,27 +24,16 @@ export default function About() {
   return (
     <section id="about" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="w-full mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="mb-12">
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center">
-            About <span className="gradient-text">Me</span>
+            <ScrollFloat animationDuration={1} ease="back.out(2)" stagger={0.03}>About</ScrollFloat> <ScrollFloat className="gradient-text" animationDuration={1} ease="back.out(2)" stagger={0.03} split={false}>Me</ScrollFloat>
           </h2>
-          <div className="w-20 h-1 bg-primary mx-auto mb-12" />
-        </motion.div>
+          <div className="w-20 h-1 bg-primary mx-auto" />
+        </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
+          <ScrollReveal x={-50} y={0} duration={0.8} className="space-y-6">
             <p className="text-lg text-muted-foreground leading-relaxed">
               I am <span className="text-primary font-semibold">Jason Joshua</span> — a developer passionate about building interactive web applications, scalable systems, visually appealing front-end experiences, and cloud-native data pipelines.
             </p>
@@ -74,23 +64,13 @@ export default function About() {
                 GitHub
               </a>
             </div>
-          </motion.div>
+          </ScrollReveal>
 
           {/* Highlights */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
+          <ScrollReveal x={50} y={0} stagger={0.15} className="space-y-6">
             {highlights.map((item, index) => (
-              <motion.div
+              <div
                 key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="glass p-6 rounded-xl hover:bg-white/10 transition-all group"
               >
                 <div className="flex items-start gap-4">
@@ -102,9 +82,9 @@ export default function About() {
                     <p className="text-muted-foreground">{item.description}</p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

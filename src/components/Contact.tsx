@@ -140,18 +140,6 @@ export default function Contact() {
   return (
     <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
       <div className="w-full mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center">
-            Get In <span className="gradient-text">Touch</span>
-          </h2>
-          <div className="w-20 h-1 bg-primary mx-auto mb-16" />
-        </motion.div>
-
         <div className="grid md:grid-cols-2 gap-12">
           {/* Contact Info */}
           <motion.div

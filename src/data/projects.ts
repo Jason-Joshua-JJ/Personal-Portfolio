@@ -50,21 +50,7 @@ export const projects: Project[] = [
             "Lambda-triggered workflows"
         ]
     },
-    {
-        id: 4,
-        title: "Interactive 3D Developer Resume",
-        description: "A stunning Three.js animated scene representing professional skills and career timeline. Interactive 3D visualization with smooth camera controls and particle effects.",
-        tech: ["React", "Three.js", "react-three-fiber", "Framer Motion"],
-        category: "Creative/3D",
-        demo: "https://example.com",
-        github: "https://github.com/Jason-Joshua-JJ",
-        features: [
-            "3D skill visualization",
-            "Interactive timeline",
-            "Particle effects",
-            "Smooth animations"
-        ]
-    },
+
     {
         id: 5,
         title: "SaaS Project Management",

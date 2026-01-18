@@ -1,14 +1,17 @@
 // src/components/Character3D.tsx
 import { useRef, Suspense, useState, useEffect } from 'react';
+import ScrollFloat from './ScrollFloat';
+import PaintSplatter from './PaintSplatter';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, PerspectiveCamera, OrbitControls, Environment, useAnimations } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ASSETS, ANIMATIONS, ACTIONS } from '../constants/assets';
 import CharacterControls from './CharacterControls';
 import Loader from './ui/Loader';
 import SceneErrorBoundary from './SceneErrorBoundary';
+// ... imports
 
 function CuteCharacter({ action }: { action: string }) {
     const group = useRef<THREE.Group>(null);
@@ -34,11 +37,25 @@ function CuteCharacter({ action }: { action: string }) {
             animToPlay = ANIMATIONS.IDLE;
         } else if (action === ACTIONS.HOWL) {
             animToPlay = ANIMATIONS.WAVE; // Map howl to Wave
+        } else if (action === ACTIONS.JUMP) {
+            animToPlay = ANIMATIONS.JUMP;
+        } else if (action === ACTIONS.PAINT) {
+            animToPlay = ANIMATIONS.THUMBSUP; // Finger guns!
         }
 
         const actionObj = actions[animToPlay];
         if (actionObj) {
             actionObj.reset().fadeIn(0.5).play();
+
+            // Loop Logic: Default is LoopRepeat.
+            // For Emotes (Jump, Paint/ThumbsUp), we want LoopOnce.
+            if (animToPlay === ANIMATIONS.JUMP || animToPlay === ANIMATIONS.THUMBSUP) {
+                actionObj.setLoop(THREE.LoopOnce, 1);
+                actionObj.clampWhenFinished = true;
+            } else {
+                actionObj.setLoop(THREE.LoopRepeat, Infinity);
+                actionObj.clampWhenFinished = false;
+            }
 
             // If moonwalking, we might want to adjust timeScale to make it look like sliding back
             if (action === ACTIONS.MOONWALK) {
@@ -49,6 +66,8 @@ function CuteCharacter({ action }: { action: string }) {
         }
 
         return () => {
+            // If we are switching actions, perform a fade out.
+            // If it was a 'LoopOnce' action, it might already be stopped, but fadeOut is safe.
             actionObj?.fadeOut(0.5);
         };
     }, [action, actions, clock]);
@@ -89,6 +108,14 @@ function CuteCharacter({ action }: { action: string }) {
                 group.current.position.y = -1;
                 group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
             }
+            // Jump
+            else if (action === ACTIONS.JUMP) {
+                // If the animation handles height, we keep y=-1. If not, we might need to animate arc.
+                // Assuming RobotExpressive 'Jump' is in-place root motion or stationary.
+                // Let's add a slight rotation excitement.
+                group.current.position.y = -1;
+                group.current.rotation.y += 0.05; // Spin while jumping!
+            }
         }
     });
 
@@ -102,14 +129,22 @@ function CuteCharacter({ action }: { action: string }) {
 interface Character3DProps {
     onOpenTerminal: () => void;
     isPartyMode?: boolean;
+    isHeroActive?: boolean;
 }
 
-export default function Character3D({ onOpenTerminal, isPartyMode }: Character3DProps) {
+export default function Character3D({ onOpenTerminal, isPartyMode, isHeroActive = true }: Character3DProps) {
     const [characterAction, setCharacterAction] = useState<string>(ACTIONS.IDLE);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+    // Scroll Animations
+    const { scrollY } = useScroll();
+    const scale = useTransform(scrollY, [0, 800], [1, 0.9]);
+    const filter = useTransform(scrollY, [0, 800], ["blur(0px)", "blur(8px)"]);
+    const opacity = useTransform(scrollY, [0, 600], [1, 0.5]); // Slight fade to help text readability
+
     // Startup Sequence
     useEffect(() => {
+        // ... startup logic ...
         // 1. Walk Sideways
         setCharacterAction(ACTIONS.STARTUP_WALK);
 
@@ -129,27 +164,67 @@ export default function Character3D({ onOpenTerminal, isPartyMode }: Character3D
         };
     }, []);
 
+    const [splatterTrigger, setSplatterTrigger] = useState(false);
+
     useEffect(() => {
+        // ... party mode logic ...
         if (isPartyMode) {
             setCharacterAction(ACTIONS.FLOSS);
         } else if (characterAction === ACTIONS.FLOSS) {
             setCharacterAction(ACTIONS.IDLE);
         }
-    }, [isPartyMode]);
+
+        // Paint Splatter Logic
+        if (characterAction === ACTIONS.PAINT) {
+            // Delay to match the "ThumbsUp" pointing motion
+            const timer = setTimeout(() => {
+                setSplatterTrigger(true);
+            }, 800); // 0.8s works well for RobotExpressive ThumbsUp point
+
+            // Reset trigger after a bit
+            const resetTimer = setTimeout(() => {
+                setSplatterTrigger(false);
+                // Also reset character to IDLE so the animation can be re-triggered cleanly
+                setCharacterAction(ACTIONS.IDLE);
+            }, 2500);
+
+            return () => {
+                clearTimeout(timer);
+                clearTimeout(resetTimer);
+            };
+        } else {
+            setSplatterTrigger(false);
+        }
+    }, [isPartyMode, characterAction]);
 
     return (
-        <section className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-background via-background to-secondary/10">
+        <motion.section
+            style={{ scale, filter, opacity }}
+            className="relative h-full w-full overflow-hidden bg-gradient-to-br from-background via-background to-secondary/10"
+        >
+            <PaintSplatter trigger={splatterTrigger} />
             <div className="relative h-full w-full flex items-center">
                 {/* Left Side - Text Content */}
                 <div className="relative z-10 w-full lg:w-1/2 px-6 lg:px-12 xl:px-20">
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        animate={isHeroActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className="space-y-6 max-w-2xl"
                     >
                         <h1 className="text-5xl font-extrabold leading-tight md:text-6xl lg:text-7xl xl:text-8xl">
-                            <span className="gradient-text">Jason Joshua</span>
+                            {/* Only start ScrollFloat when hero is active */}
+                            {isHeroActive && (
+                                <ScrollFloat
+                                    className="gradient-text"
+                                    animationDuration={1.2}
+                                    ease="back.out(1.5)"
+                                    stagger={0.05}
+                                    split={false} // Keep manual word splitting if needed, or let it split chars
+                                >
+                                    Jason Joshua
+                                </ScrollFloat>
+                            )}
                         </h1>
 
                         <div className="space-y-3">
@@ -237,7 +312,7 @@ export default function Character3D({ onOpenTerminal, isPartyMode }: Character3D
                 onActionChange={setCharacterAction}
             />
 
-        </section >
+        </motion.section >
     );
 }
 

@@ -1,7 +1,7 @@
-// src/components/Navbar.tsx
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
 
 const navItems = [
@@ -9,7 +9,7 @@ const navItems = [
   { name: "Skills", href: "#skills" },
   { name: "Projects", href: "#projects" },
   { name: "Certifications", href: "#certifications" },
-  { name: "Gallery", href: "#gallery" },
+  { name: "Gallery", href: "/gallery" },
   { name: "Contact", href: "#contact" },
 ];
 
@@ -18,126 +18,79 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onOpenTerminal }: NavbarProps) {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showBurger, setShowBurger] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      // If NOT home page, always show burger
+      if (location.pathname !== "/") {
+        setShowBurger(true);
+        return;
+      }
+
+      // If Home page, show burger only after scrolling past the hero (viewport height)
+      // We can use a threshold like 100vh - 100px to fade it in nicely
+      const threshold = window.innerHeight - 100;
+      setShowBurger(window.scrollY > threshold);
     };
+
+    // Initial check
+    handleScroll();
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [location.pathname]);
+
+  // Toggle Menu
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  // LOGIC:
+  // 1. Is Hero Visible? (scrollY < threshold) -> Show Navbar (Logo + Links)
+  // 2. Is Scrolled? (scrollY > threshold) -> Show Burger Only
+
+  const isHeroVisible = !showBurger;
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "glass shadow-lg" : "bg-transparent"
-        }`}
-    >
-      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* LOGO */}
-          <motion.a
-            href="#"
-            className="flex items-center gap-3 select-none"
-            whileHover={{ scale: 1.05 }}
-          >
-            <img
-              src="/logo.png"
-              alt="JJ Logo"
-              className="w-10 h-10 rounded-lg object-contain shadow-[0_0_20px_rgba(0,217,255,0.45)] hover:shadow-[0_0_35px_rgba(0,217,255,0.6)] transition-all"
-            />
-            <span className="text-2xl font-bold gradient-text hidden sm:inline">
-              Jason Joshua
-            </span>
-          </motion.a>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-foreground/80 hover:text-primary transition-colors relative group"
-              >
-                {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
-              </a>
-            ))}
-
-            {/* Theme Toggle */}
-            <ThemeToggle />
-
-            {/* Terminal Button */}
-            <button
-              onClick={onOpenTerminal}
-              className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 hover:shadow-[0_0_15px_rgba(0,217,255,0.3)] transition-all"
-              title="Open Terminal"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="4 17 10 11 4 5" />
-                <line x1="12" y1="19" x2="20" y2="19" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Dropdown */}
+    <>
+      {/* 1. DESKTOP NAVBAR (Visible only in Hero) */}
       <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="md:hidden glass border-t border-border"
+        {isHeroVisible && (
+          <motion.nav
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-0 left-0 right-0 z-50 h-24 flex items-center justify-end px-6 sm:px-10 bg-transparent"
           >
-            <div className="px-2 pt-2 pb-3 space-y-1">
+            {/* Logo removed as per user request */}
+
+            {/* Desktop Links */}
+            <div className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block px-3 py-2 text-base font-medium text-foreground/80 hover:text-primary hover:bg-white/5 rounded-md transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-lg font-medium text-white/80 hover:text-primary transition-colors hover:scale-105"
                 >
                   {item.name}
                 </a>
               ))}
+
+              <div className="pl-4 border-l border-white/10">
+                <ThemeToggle />
+              </div>
+
               <button
-                onClick={() => {
-                  onOpenTerminal();
-                  setIsMobileMenuOpen(false);
-                }}
-                className="w-full text-left flex items-center gap-2 px-3 py-2 text-base font-medium text-primary hover:bg-white/5 rounded-md transition-colors"
+                onClick={onOpenTerminal}
+                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition-all"
+                title="Open Terminal"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
+                  width="20"
+                  height="20"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -148,15 +101,90 @@ export default function Navbar({ onOpenTerminal }: NavbarProps) {
                   <polyline points="4 17 10 11 4 5" />
                   <line x1="12" y1="19" x2="20" y2="19" />
                 </svg>
-                Open Terminal
               </button>
-              <div className="px-3 py-2">
-                <ThemeToggle />
-              </div>
             </div>
-          </motion.div>
+          </motion.nav>
         )}
-      </AnimatePresence>
-    </motion.nav>
+      </AnimatePresence >
+
+      {/* 2. BURGER BUTTON (Appears after Scroll) */}
+      <AnimatePresence>
+        {
+          (showBurger || isMenuOpen) && (
+            <motion.button
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: 180 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={toggleMenu}
+              className={`fixed top-6 right-6 sm:right-10 z-50 p-3 rounded-full backdrop-blur-md shadow-lg transition-colors ${isMenuOpen
+                ? "bg-red-500/20 text-red-500 hover:bg-red-500/30"
+                : "bg-primary/10 text-primary hover:bg-primary/20"
+                }`}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </motion.button>
+          )
+        }
+      </AnimatePresence >
+
+      {/* 3. FULL SCREEN MENU OVERLAY */}
+      <AnimatePresence>
+        {
+          isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+              animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
+              exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+              className="fixed inset-0 z-40 bg-background/90 flex items-center justify-center p-4"
+            >
+              <div className="flex flex-col items-center gap-8 max-w-lg w-full">
+
+                {/* Links */}
+                <nav className="flex flex-col items-center gap-6 w-full">
+                  {navItems.map((item, i) => (
+                    <motion.a
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="text-4xl md:text-5xl font-bold text-foreground/80 hover:text-primary transition-colors hover:scale-105"
+                    >
+                      {item.name}
+                    </motion.a>
+                  ))}
+                </nav>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="w-full h-px bg-border/50"
+                />
+
+                {/* Extras */}
+                <div className="flex items-center gap-6">
+                  <ThemeToggle />
+
+                  <button
+                    onClick={() => {
+                      onOpenTerminal();
+                      setIsMenuOpen(false);
+                    }}
+                    className="flex items-center gap-2 px-6 py-3 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all font-mono"
+                  >
+                    <span className="text-xl">Opn_Trmnl</span>
+                  </button>
+                </div>
+
+              </div>
+            </motion.div>
+          )
+        }
+      </AnimatePresence >
+    </>
   );
 }

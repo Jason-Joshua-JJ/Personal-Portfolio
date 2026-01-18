@@ -14,11 +14,11 @@ export const ANIMATIONS = {
     DEATH: "Death",
     SITTING: "Sitting",
     STANDING: "Standing",
-    ump: "Jump",
+    JUMP: "Jump",
     YES: "Yes",
     NO: "No",
     PUNCH: "Punch",
-    THUMBSUP: "ThumbsUp",
+    THUMBSUP: "ThumbsUp", // Fixed
 };
 
 export const ACTIONS = {
@@ -27,4 +27,6 @@ export const ACTIONS = {
     FLOSS: "floss",
     IDLE: "idle",
     HOWL: "howl",
+    JUMP: "jump",
+    PAINT: "paint",
 };

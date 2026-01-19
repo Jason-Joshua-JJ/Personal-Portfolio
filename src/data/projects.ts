@@ -71,7 +71,7 @@ export const projects: Project[] = [
         description: "A premium full-stack e-commerce platform for luxury footwear. Includes advanced product filtering, secure payment processing, user authentication, and an admin dashboard for inventory management.",
         tech: ["React", "Node.js", "MongoDB", "Express", "Stripe", "Tailwind CSS"],
         category: "E-commerce/Full-Stack",
-        demo: "https://example.com",
+
         github: "https://github.com/Jason-Joshua-JJ",
         features: [
             "Advanced Product Filtering",

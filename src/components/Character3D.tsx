@@ -11,6 +11,7 @@ import { ASSETS, ANIMATIONS, ACTIONS } from '../constants/assets';
 import CharacterControls from './CharacterControls';
 import Loader from './ui/Loader';
 import SceneErrorBoundary from './SceneErrorBoundary';
+import { useIsMobile } from '@/hooks/use-mobile';
 // ... imports
 
 function CuteCharacter({ action }: { action: string }) {
@@ -135,6 +136,7 @@ interface Character3DProps {
 export default function Character3D({ onOpenTerminal, isPartyMode, isHeroActive = true }: Character3DProps) {
     const [characterAction, setCharacterAction] = useState<string>(ACTIONS.IDLE);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const isMobile = useIsMobile();
 
     // Scroll Animations
     const { scrollY } = useScroll();
@@ -292,12 +294,14 @@ export default function Character3D({ onOpenTerminal, isPartyMode, isHeroActive 
 
                                 <CuteCharacter action={characterAction} />
 
-                                <OrbitControls
-                                    enableZoom={false}
-                                    enablePan={false}
-                                    minPolarAngle={Math.PI / 3}
-                                    maxPolarAngle={Math.PI / 2}
-                                />
+                                {!isMobile && (
+                                    <OrbitControls
+                                        enableZoom={false}
+                                        enablePan={false}
+                                        minPolarAngle={Math.PI / 3}
+                                        maxPolarAngle={Math.PI / 2}
+                                    />
+                                )}
                             </Canvas>
                         </Suspense>
                     </SceneErrorBoundary>
